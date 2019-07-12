@@ -62,7 +62,7 @@ type MiniDrone struct {
 
 // Robot is enhancing the Gobot Robot
 type Robot struct {
-	*gobot.Robot
+	gobot.Robot
 }
 
 // NewDrone is creating a new Drone Configuration
@@ -72,7 +72,7 @@ func NewDrone(test bool) Drone {
 		d := &TestDrone{}
 		d.TestDriver = NewTestDriver()
 
-		d.Robot.Robot = gobot.NewRobot("minidrone",
+		d.Robot.Robot = *gobot.NewRobot("minidrone",
 			[]gobot.Connection{},
 			[]gobot.Device{d},
 		)
@@ -83,7 +83,7 @@ func NewDrone(test bool) Drone {
 	d.bleAdaptor = ble.NewClientAdaptor(os.Getenv("DRONE_NAME"))
 	d.Driver = minidrone.NewDriver(d.bleAdaptor)
 
-	d.Robot.Robot = gobot.NewRobot("minidrone",
+	d.Robot.Robot = *gobot.NewRobot("minidrone",
 		[]gobot.Connection{d.bleAdaptor},
 		[]gobot.Device{d},
 	)
