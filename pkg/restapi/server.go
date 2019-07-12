@@ -127,7 +127,7 @@ func (s *Server) Fatalf(f string, args ...interface{}) {
 }
 
 // SetAPI configures the server with the specified API. Needs to be called before Serve
-func (s *Server) SetAPI(api *operations.KymaDroneAPI) {
+func (s *Server) SetAPI(api *operations.KymaDroneAPI, drone drone.Drone) {
 	if api == nil {
 		s.api = nil
 		s.handler = nil
@@ -136,7 +136,7 @@ func (s *Server) SetAPI(api *operations.KymaDroneAPI) {
 
 	s.api = api
 	s.api.Logger = log.Printf
-	s.handler = configureAPI(api)
+	s.handler = configureAPI(api, drone)
 }
 
 func (s *Server) hasScheme(scheme string) bool {
