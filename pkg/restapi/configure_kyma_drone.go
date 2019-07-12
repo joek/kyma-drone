@@ -4,14 +4,13 @@ package restapi
 
 import (
 	"crypto/tls"
-	"log"
 	"net/http"
-	"os"
+
+	"github.com/joek/kyma-drone/pkg/drone"
 
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 
-	"github.com/joek/kyma-drone/pkg/drone"
 	"github.com/joek/kyma-drone/pkg/handlers"
 	"github.com/joek/kyma-drone/pkg/restapi/operations"
 )
@@ -22,7 +21,7 @@ func configureFlags(api *operations.KymaDroneAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
-func configureAPI(api *operations.KymaDroneAPI) http.Handler {
+func configureAPI(api *operations.KymaDroneAPI, drone drone.Drone) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -32,49 +31,35 @@ func configureAPI(api *operations.KymaDroneAPI) http.Handler {
 	// Example:
 	// api.Logger = log.Printf
 
-	t := false
-	if os.Getenv("TEST") == "true" {
-		t = true
-	}
-	d := drone.NewDrone(t)
-
-	go func() {
-		err := d.StartRobot()
-		if err != nil {
-			log.Fatal("Failed to start Robot")
-		}
-	}()
-
 	api.JSONConsumer = runtime.JSONConsumer()
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.HaltDroneHandler = handlers.NewPublicHaltDroneHandler(d)
-	api.LandDroneHandler = handlers.NewPublicLandDroneHandler(d)
-	api.LeftDroneHandler = handlers.NewPublicLeftDroneHandler(d)
-	api.RightDroneHandler = handlers.NewPublicRightDroneHandler(d)
-	api.ForwardDroneHandler = handlers.NewPublicForwardDroneHandler(d)
-	api.BackwardDroneHandler = handlers.NewPublicBackwardDroneHandler(d)
-	api.StartDroneHandler = handlers.NewPublicStartDroneHandler(d)
-	api.StopDroneHandler = handlers.NewPublicStopDroneHandler(d)
-	api.TakeOffDroneHandler = handlers.NewPublicTakeOffDroneHandler(d)
-	api.BackFlipDroneHandler = handlers.NewPublicBackFlipDroneHandler(d)
-	api.FrontFlipDroneHandler = handlers.NewPublicFrontFlipDroneHandler(d)
-	api.LeftFlipDroneHandler = handlers.NewPublicLeftFlipDroneHandler(d)
-	api.RightFlipDroneHandler = handlers.NewPublicRightFlipDroneHandler(d)
-	api.UpDroneHandler = handlers.NewPublicUpDroneHandler(d)
-	api.DownDroneHandler = handlers.NewPublicDownDroneHandler(d)
-	api.ClockwiseDroneHandler = handlers.NewPublicClockwiseDroneHandler(d)
-	api.CounterClockwiseDroneHandler = handlers.NewPublicCounterClockwiseDroneHandler(d)
-	api.TakePictureDroneHandler = handlers.NewPublicTakePictureDroneHandler(d)
-	api.EmergencyDroneHandler = handlers.NewPublicEmergencyDroneHandler(d)
-	api.FlatTrimDroneHandler = handlers.NewPublicFlatTrimDroneHandler(d)
-	api.LightControlDroneHandler = handlers.NewPublicLightControlDroneHandler(d)
-	api.GunControlDroneHandler = handlers.NewPublicGunControlDroneHandler(d)
-	api.ClawControlDroneHandler = handlers.NewPublicClawControlDroneHandler(d)
+	api.HaltDroneHandler = handlers.NewPublicHaltDroneHandler(drone)
+	api.LandDroneHandler = handlers.NewPublicLandDroneHandler(drone)
+	api.LeftDroneHandler = handlers.NewPublicLeftDroneHandler(drone)
+	api.RightDroneHandler = handlers.NewPublicRightDroneHandler(drone)
+	api.ForwardDroneHandler = handlers.NewPublicForwardDroneHandler(drone)
+	api.BackwardDroneHandler = handlers.NewPublicBackwardDroneHandler(drone)
+	api.StartDroneHandler = handlers.NewPublicStartDroneHandler(drone)
+	api.StopDroneHandler = handlers.NewPublicStopDroneHandler(drone)
+	api.TakeOffDroneHandler = handlers.NewPublicTakeOffDroneHandler(drone)
+	api.BackFlipDroneHandler = handlers.NewPublicBackFlipDroneHandler(drone)
+	api.FrontFlipDroneHandler = handlers.NewPublicFrontFlipDroneHandler(drone)
+	api.LeftFlipDroneHandler = handlers.NewPublicLeftFlipDroneHandler(drone)
+	api.RightFlipDroneHandler = handlers.NewPublicRightFlipDroneHandler(drone)
+	api.UpDroneHandler = handlers.NewPublicUpDroneHandler(drone)
+	api.DownDroneHandler = handlers.NewPublicDownDroneHandler(drone)
+	api.ClockwiseDroneHandler = handlers.NewPublicClockwiseDroneHandler(drone)
+	api.CounterClockwiseDroneHandler = handlers.NewPublicCounterClockwiseDroneHandler(drone)
+	api.TakePictureDroneHandler = handlers.NewPublicTakePictureDroneHandler(drone)
+	api.EmergencyDroneHandler = handlers.NewPublicEmergencyDroneHandler(drone)
+	api.FlatTrimDroneHandler = handlers.NewPublicFlatTrimDroneHandler(drone)
+	api.LightControlDroneHandler = handlers.NewPublicLightControlDroneHandler(drone)
+	api.GunControlDroneHandler = handlers.NewPublicGunControlDroneHandler(drone)
+	api.ClawControlDroneHandler = handlers.NewPublicClawControlDroneHandler(drone)
 
 	api.ServerShutdown = func() {
-		d.StopRobot()
 	}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))

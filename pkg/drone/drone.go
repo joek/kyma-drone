@@ -1,11 +1,7 @@
 package drone
 
 import (
-	"os"
-
 	"gobot.io/x/gobot"
-	"gobot.io/x/gobot/platforms/ble"
-	"gobot.io/x/gobot/platforms/parrot/minidrone"
 )
 
 // Drone interface is a generic drone
@@ -43,64 +39,4 @@ type Drone interface {
 	LightControl(id uint8, mode uint8, intensity uint8) error
 	ClawControl(id uint8, mode uint8) (err error)
 	GunControl(id uint8) (err error)
-	StartRobot() error
-	StopRobot() error
-}
-
-// TestDrone is creating a Test Drone
-type TestDrone struct {
-	*TestDriver
-	Robot *gobot.Robot
-}
-
-// MiniDrone is creating a Minit Drone
-type MiniDrone struct {
-	bleAdaptor *ble.ClientAdaptor
-	*minidrone.Driver
-	Robot *gobot.Robot
-}
-
-// NewDrone is creating a new Drone Configuration
-func NewDrone(test bool) Drone {
-
-	if test {
-		d := &TestDrone{}
-		d.TestDriver = NewTestDriver()
-
-		d.Robot = gobot.NewRobot("minidrone",
-			[]gobot.Connection{},
-			[]gobot.Device{d},
-		)
-		return d
-	}
-
-	d := &MiniDrone{}
-	d.bleAdaptor = ble.NewClientAdaptor(os.Getenv("DRONE_NAME"))
-	d.Driver = minidrone.NewDriver(d.bleAdaptor)
-
-	d.Robot = gobot.NewRobot("minidrone",
-		[]gobot.Connection{d.bleAdaptor},
-		[]gobot.Device{d},
-	)
-	return d
-}
-
-// StartRobot is starting the Robot
-func (d *TestDrone) StartRobot() error {
-	return d.Robot.Start()
-}
-
-// StopRobot is stopping the Robot
-func (d *TestDrone) StopRobot() error {
-	return d.Robot.Stop()
-}
-
-// StartRobot is starting the Robot
-func (d *MiniDrone) StartRobot() error {
-	return d.Robot.Start()
-}
-
-// StopRobot is stopping the Robot
-func (d *MiniDrone) StopRobot() error {
-	return d.Robot.Stop()
 }
