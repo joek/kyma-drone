@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 
 	"gobot.io/x/gobot/platforms/parrot/minidrone"
 
@@ -22,12 +23,15 @@ func (h PublicClawControlDroneHandler) Handle(params operations.ClawControlDrone
 	var m uint8
 	switch *params.Value.Mode {
 	case "ClawOpen":
+		log.Println("OpenClaw")
 		m = minidrone.ClawOpen
 	case "ClawClosed":
+		log.Println("CloseClaw")
 		m = minidrone.ClawClosed
 	default:
 		c := int32(30)
 		m := "Error: Unknown Claw mode"
+		log.Println(m)
 		er := operations.NewClawControlDroneDefault(-10)
 		er.SetPayload(&models.ErrorModel{
 			Code:    &c,
@@ -35,6 +39,7 @@ func (h PublicClawControlDroneHandler) Handle(params operations.ClawControlDrone
 		})
 		return er
 	}
+	log.Println("Set Claw Mode")
 	err := h.drone.ClawControl(0, m)
 	if err != nil {
 		c := int32(20)
