@@ -50,19 +50,14 @@ type Drone interface {
 // TestDrone is creating a Test Drone
 type TestDrone struct {
 	*TestDriver
-	Robot
+	Robot *gobot.Robot
 }
 
 // MiniDrone is creating a Minit Drone
 type MiniDrone struct {
 	bleAdaptor *ble.ClientAdaptor
 	*minidrone.Driver
-	Robot
-}
-
-// Robot is enhancing the Gobot Robot
-type Robot struct {
-	gobot.Robot
+	Robot *gobot.Robot
 }
 
 // NewDrone is creating a new Drone Configuration
@@ -72,7 +67,7 @@ func NewDrone(test bool) Drone {
 		d := &TestDrone{}
 		d.TestDriver = NewTestDriver()
 
-		d.Robot.Robot = *gobot.NewRobot("minidrone",
+		d.Robot = gobot.NewRobot("minidrone",
 			[]gobot.Connection{},
 			[]gobot.Device{d},
 		)
@@ -83,7 +78,7 @@ func NewDrone(test bool) Drone {
 	d.bleAdaptor = ble.NewClientAdaptor(os.Getenv("DRONE_NAME"))
 	d.Driver = minidrone.NewDriver(d.bleAdaptor)
 
-	d.Robot.Robot = *gobot.NewRobot("minidrone",
+	d.Robot = gobot.NewRobot("minidrone",
 		[]gobot.Connection{d.bleAdaptor},
 		[]gobot.Device{d},
 	)
@@ -91,11 +86,21 @@ func NewDrone(test bool) Drone {
 }
 
 // StartRobot is starting the Robot
-func (d *Robot) StartRobot() error {
+func (d *TestDrone) StartRobot() error {
 	return d.Robot.Start()
 }
 
 // StopRobot is stopping the Robot
-func (d *Robot) StopRobot() error {
+func (d *TestDrone) StopRobot() error {
+	return d.Robot.Stop()
+}
+
+// StartRobot is starting the Robot
+func (d *MiniDrone) StartRobot() error {
+	return d.Robot.Start()
+}
+
+// StopRobot is stopping the Robot
+func (d *MiniDrone) StopRobot() error {
 	return d.Robot.Stop()
 }
