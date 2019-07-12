@@ -91,11 +91,11 @@ func NewDrone(test bool) Drone {
 }
 
 // StartRobot is starting the Robot
-func (d Robot) StartRobot() error {
+func (d *Robot) StartRobot() error {
 	return d.Robot.Start()
 }
 
 // StopRobot is stopping the Robot
-func (d Robot) StopRobot() error {
+func (d *Robot) StopRobot() error {
 	return d.Robot.Stop()
 }
