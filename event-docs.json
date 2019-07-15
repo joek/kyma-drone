@@ -1,0 +1,32 @@
+{
+    "asyncapi": "1.0.0",
+    "info": {
+        "title": "Kyma Drone Events",
+        "version": "v1",
+        "description": "Drone Events"
+    },
+    "topics": {
+        "drone.started.v1": {
+            "subscribe": {
+                "summary": "The drone is started",
+                "payload": {
+                    "type": "object",
+                    "required": [
+                        "drone"
+                    ],
+                    "properties": {
+                        "drone": {
+                            "type": "string",
+                            "example": {
+                                "drone": "Mambo_711742"
+                            },
+                            "properties": null,
+                            "description": "Drone Name",
+                            "title": "Drone Name"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

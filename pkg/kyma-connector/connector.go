@@ -17,6 +17,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/tehcyx/kyma-integration/pkg/kyma/certificate"
 )
 
@@ -40,6 +41,7 @@ func NewKymaConnector(c string) (*KymaConnector, error) {
 // WriteService is storing the service configuration to disc
 func (c *KymaConnector) WriteService(s *Service) error {
 	f := c.ServicePath(s.id)
+	log.Println(f)
 	b, err := json.Marshal(s)
 	if err != nil {
 		log.Println("Failed to generate json struct.")
@@ -198,6 +200,47 @@ func (c *KymaConnector) Connect(urlString string) (err error) {
 	}
 
 	return c.WriteConfig()
+}
+
+// SendEvent is sending an event to kyma
+func (c *KymaConnector) SendEvent(message json.RawMessage, eventType string, version string) (err error) {
+	client, err := c.GetSecureClient()
+	if err != nil {
+		return
+	}
+
+	e := &Event{
+		Type:        eventType,
+		TypeVersion: version,
+		ID:          uuid.New().String(),
+		Time:        time.Now(),
+		Data:        message,
+	}
+
+	b, err := json.Marshal(e)
+	if err != nil {
+		log.Println("Failed to generate event.")
+		return err
+	}
+
+	resp, err := client.Post(c.AppInfo.API.EventsURL, "application/json", bytes.NewBuffer(b))
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyString := string(bodyBytes)
+
+	if resp.StatusCode != 200 {
+		log.Printf("Failed to send event (Status: %d", resp.StatusCode)
+		return errors.New(bodyString)
+	}
+
+	log.Println(bodyString)
+
+	return
 }
 
 // Register is registering an service to kyma

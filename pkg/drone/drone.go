@@ -1,7 +1,11 @@
 package drone
 
 import (
+	"log"
+
+	connector "github.com/joek/kyma-drone/pkg/kyma-connector"
 	"gobot.io/x/gobot"
+	"gobot.io/x/gobot/platforms/parrot/minidrone"
 )
 
 // Drone interface is a generic drone
@@ -39,4 +43,13 @@ type Drone interface {
 	LightControl(id uint8, mode uint8, intensity uint8) error
 	ClawControl(id uint8, mode uint8) (err error)
 	GunControl(id uint8) (err error)
+}
+
+func GetDroneWorker(d *minidrone.Driver, conn *connector.KymaConnector) func() {
+	d.On(minidrone.Takeoff, func(data interface{}) {
+		log.Println("Takeoff")
+
+	})
+	return func() {
+	}
 }

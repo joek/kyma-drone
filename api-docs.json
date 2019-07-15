@@ -479,6 +479,33 @@
           }
         }
       },
+      "/shipPackage": {
+        "post": {
+          "description": "shipPackage tells drone to ship a package.",
+          "operationId": "shipPackage",
+          "parameters": [
+            {
+              "in":"body",
+              "name":"value",
+              "description": "OrderCode - OrderID which will be returned as soon as the drone is landed.",
+              "schema": {
+                "$ref": "#/definitions/ShippingModel"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Drone is setting the lights"
+            },
+            "default": {
+              "description": "unexpected error",
+              "schema": {
+                "$ref": "#/definitions/ErrorModel"
+              }
+            }
+          }
+        }
+      },
       "/clawControl": {
         "post": {
           "description": "ClawControl tells drone to open or close the claw.",
@@ -547,6 +574,17 @@
         ],
         "properties": {
             "mode": {
+                "type": "string"
+            }
+        }
+      },
+      "ShippingModel": {
+        "type": "object",
+        "required": [
+            "OrderCode"
+        ],
+        "properties": {
+            "OrderCode": {
                 "type": "string"
             }
         }

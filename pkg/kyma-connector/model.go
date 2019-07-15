@@ -2,6 +2,7 @@ package connector
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/tehcyx/kyma-integration/pkg/kyma/certificate"
 )
@@ -53,6 +54,7 @@ type ServiceBasicCredentials struct {
 type ServiceOAuthCredentials struct {
 	ClientID     string `json:"clientId,omitempty"`
 	ClientSecret string `json:"clientSecret,omitempty"`
+	URL          string `json:"url,omitempty"`
 }
 
 // ServiceEvent kyma service event definition
@@ -74,4 +76,13 @@ type ServiceDocumentationDoc struct {
 	Title  string `json:"title,omitempty"`
 	Type   string `json:"type,omitempty"`
 	Source string `json:"source,omitempty"`
+}
+
+// Event kyma event
+type Event struct {
+	Type        string          `json:"event-type"`
+	TypeVersion string          `json:"event-type-version"`
+	ID          string          `json:"event-id,omitempty"`
+	Time        time.Time       `json:"event-time,omitempty"`
+	Data        json.RawMessage `json:"data"`
 }

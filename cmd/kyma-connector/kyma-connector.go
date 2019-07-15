@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 
@@ -86,6 +87,26 @@ func (x *UpdateCommand) Execute(args []string) error {
 	return nil
 }
 
+type SendEvent struct {
+}
+
+var sendEvent SendEvent
+
+func (x *SendEvent) Execute(args []string) error {
+	c, err := connector.NewKymaConnector(options.ConfigPath)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+
+	err = c.SendEvent(json.RawMessage(`{"drone": "Mambo_711742"}`), "drone.started", "v1")
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+	return nil
+}
+
 func main() {
 	parser := flags.NewParser(&options, flags.Default)
 
@@ -103,6 +124,11 @@ func main() {
 		"Update Service",
 		"Update Service configuration.",
 		&updateCommand)
+
+	parser.AddCommand("event",
+		"Send Test Event",
+		"Send Test Event.",
+		&sendEvent)
 
 	if _, err := parser.Parse(); err != nil {
 		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
