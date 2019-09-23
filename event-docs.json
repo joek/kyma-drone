@@ -27,6 +27,50 @@
                     }
                 }
             }
+        },
+        "drone.takeOff.v1": {
+            "subscribe": {
+                "summary": "The drone is taking off",
+                "payload": {
+                    "type": "object",
+                    "required": [
+                        "drone"
+                    ],
+                    "properties": {
+                        "drone": {
+                            "type": "string",
+                            "example": {
+                                "drone": "Mambo_711742"
+                            },
+                            "properties": null,
+                            "description": "Drone Name",
+                            "title": "Drone Name"
+                        }
+                    }
+                }
+            }
+        },
+        "drone.shipped.v1": {
+            "subscribe": {
+                "summary": "The Package is shipped",
+                "payload": {
+                    "type": "object",
+                    "required": [
+                        "orderCode"
+                    ],
+                    "properties": {
+                        "drone": {
+                            "type": "string",
+                            "example": {
+                                "orderCode": "00000003"
+                            },
+                            "properties": null,
+                            "description": "OrderCode of the shipped order.",
+                            "title": "Order Code"
+                        }
+                    }
+                }
+            }
         }
     }
 }

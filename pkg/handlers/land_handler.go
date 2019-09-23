@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/joek/kyma-drone/pkg/drone"
 	"github.com/joek/kyma-drone/pkg/models"
@@ -17,6 +18,7 @@ type PublicLandDroneHandler struct {
 
 // Handle http Handler to Land drones
 func (h PublicLandDroneHandler) Handle(params operations.LandDroneParams) middleware.Responder {
+	log.Println("Landing")
 	err := h.drone.Land()
 	if err != nil {
 		c := int32(20)

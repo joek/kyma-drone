@@ -91,6 +91,9 @@ func NewKymaDroneAPI(spec *loads.Document) *KymaDroneAPI {
 		RightFlipDroneHandler: RightFlipDroneHandlerFunc(func(params RightFlipDroneParams) middleware.Responder {
 			return middleware.NotImplemented("operation RightFlipDrone has not yet been implemented")
 		}),
+		ShipPackageHandler: ShipPackageHandlerFunc(func(params ShipPackageParams) middleware.Responder {
+			return middleware.NotImplemented("operation ShipPackage has not yet been implemented")
+		}),
 		StartDroneHandler: StartDroneHandlerFunc(func(params StartDroneParams) middleware.Responder {
 			return middleware.NotImplemented("operation StartDrone has not yet been implemented")
 		}),
@@ -173,6 +176,8 @@ type KymaDroneAPI struct {
 	RightDroneHandler RightDroneHandler
 	// RightFlipDroneHandler sets the operation handler for the right flip drone operation
 	RightFlipDroneHandler RightFlipDroneHandler
+	// ShipPackageHandler sets the operation handler for the ship package operation
+	ShipPackageHandler ShipPackageHandler
 	// StartDroneHandler sets the operation handler for the start drone operation
 	StartDroneHandler StartDroneHandler
 	// StopDroneHandler sets the operation handler for the stop drone operation
@@ -316,6 +321,10 @@ func (o *KymaDroneAPI) Validate() error {
 
 	if o.RightFlipDroneHandler == nil {
 		unregistered = append(unregistered, "RightFlipDroneHandler")
+	}
+
+	if o.ShipPackageHandler == nil {
+		unregistered = append(unregistered, "ShipPackageHandler")
 	}
 
 	if o.StartDroneHandler == nil {
@@ -525,6 +534,11 @@ func (o *KymaDroneAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/rightFlip"] = NewRightFlipDrone(o.context, o.RightFlipDroneHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/shipPackage"] = NewShipPackage(o.context, o.ShipPackageHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)

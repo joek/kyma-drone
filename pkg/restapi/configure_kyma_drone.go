@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/joek/kyma-drone/pkg/drone"
+	connector "github.com/joek/kyma-drone/pkg/kyma-connector"
 
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
@@ -21,7 +22,7 @@ func configureFlags(api *operations.KymaDroneAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
-func configureAPI(api *operations.KymaDroneAPI, drone drone.Drone) http.Handler {
+func configureAPI(api *operations.KymaDroneAPI, drone drone.Drone, conn *connector.KymaConnector) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -58,6 +59,7 @@ func configureAPI(api *operations.KymaDroneAPI, drone drone.Drone) http.Handler 
 	api.LightControlDroneHandler = handlers.NewPublicLightControlDroneHandler(drone)
 	api.GunControlDroneHandler = handlers.NewPublicGunControlDroneHandler(drone)
 	api.ClawControlDroneHandler = handlers.NewPublicClawControlDroneHandler(drone)
+	api.ShipPackageHandler = handlers.NewPublicShippingDroneHandler(drone, conn)
 
 	api.ServerShutdown = func() {
 	}

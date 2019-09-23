@@ -431,6 +431,33 @@ func init() {
         }
       }
     },
+    "/shipPackage": {
+      "post": {
+        "description": "shipPackage tells drone to ship a package.",
+        "operationId": "shipPackage",
+        "parameters": [
+          {
+            "description": "OrderCode - OrderID which will be returned as soon as the drone is landed.",
+            "name": "value",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ShippingModel"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Drone is setting the lights"
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        }
+      }
+    },
     "/start": {
       "post": {
         "description": "Start tells driver to get ready to do work",
@@ -567,6 +594,17 @@ func init() {
           "maximum": 100
         },
         "mode": {
+          "type": "string"
+        }
+      }
+    },
+    "ShippingModel": {
+      "type": "object",
+      "required": [
+        "OrderCode"
+      ],
+      "properties": {
+        "OrderCode": {
           "type": "string"
         }
       }
@@ -1000,6 +1038,33 @@ func init() {
         }
       }
     },
+    "/shipPackage": {
+      "post": {
+        "description": "shipPackage tells drone to ship a package.",
+        "operationId": "shipPackage",
+        "parameters": [
+          {
+            "description": "OrderCode - OrderID which will be returned as soon as the drone is landed.",
+            "name": "value",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ShippingModel"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Drone is setting the lights"
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        }
+      }
+    },
     "/start": {
       "post": {
         "description": "Start tells driver to get ready to do work",
@@ -1137,6 +1202,17 @@ func init() {
           "minimum": 0
         },
         "mode": {
+          "type": "string"
+        }
+      }
+    },
+    "ShippingModel": {
+      "type": "object",
+      "required": [
+        "OrderCode"
+      ],
+      "properties": {
+        "OrderCode": {
           "type": "string"
         }
       }

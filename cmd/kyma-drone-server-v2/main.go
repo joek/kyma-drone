@@ -4,8 +4,11 @@ import (
 	"log"
 	"os"
 
+	"github.com/joek/kyma-drone/pkg/drone"
+
 	"github.com/go-openapi/loads"
 	flags "github.com/jessevdk/go-flags"
+	connector "github.com/joek/kyma-drone/pkg/kyma-connector"
 	"github.com/joek/kyma-drone/pkg/restapi"
 	"github.com/joek/kyma-drone/pkg/restapi/operations"
 	"gobot.io/x/gobot"
@@ -14,13 +17,35 @@ import (
 )
 
 func main() {
-	bleAdaptor := ble.NewClientAdaptor("Mambo_711742")
-	drone := minidrone.NewDriver(bleAdaptor)
+	c, err := connector.NewKymaConnector(os.Getenv("KYMA_CONFIG"))
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+	var robot *gobot.Robot
+	var driver drone.Drone
 
-	robot := gobot.NewRobot("minidrone",
-		[]gobot.Connection{bleAdaptor},
-		[]gobot.Device{drone},
-	)
+	if os.Getenv("TEST_API") == "true" {
+		d := drone.NewTestDriver()
+		driver = d
+
+		robot = gobot.NewRobot("minidrone",
+			[]gobot.Connection{},
+			[]gobot.Device{driver},
+			drone.GetDroneWorker(d, c),
+		)
+	} else {
+		bleAdaptor := ble.NewClientAdaptor("Mambo_711742")
+		d := minidrone.NewDriver(bleAdaptor)
+		driver = d
+
+		robot = gobot.NewRobot("minidrone",
+			[]gobot.Connection{bleAdaptor},
+			[]gobot.Device{driver},
+			drone.GetDroneWorker(d, c),
+		)
+	}
+
 	go func() {
 		robot.Start()
 	}()
@@ -57,7 +82,7 @@ func main() {
 		os.Exit(code)
 	}
 
-	server.ConfigureAPI(drone)
+	server.ConfigureAPI(driver, c)
 
 	if err := server.Serve(); err != nil {
 		log.Fatalln(err)

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/joek/kyma-drone/pkg/drone"
 	"github.com/joek/kyma-drone/pkg/models"
@@ -17,6 +18,7 @@ type PublicBackFlipDroneHandler struct {
 
 // Handle http Handler to  BackFlip drones
 func (h PublicBackFlipDroneHandler) Handle(params operations.BackFlipDroneParams) middleware.Responder {
+	log.Println("Backflip")
 	err := h.drone.BackFlip()
 	if err != nil {
 		c := int32(20)

@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/joek/kyma-drone/pkg/drone"
+	connector "github.com/joek/kyma-drone/pkg/kyma-connector"
 
 	"github.com/go-openapi/runtime/flagext"
 	"github.com/go-openapi/swag"
@@ -53,9 +54,9 @@ func NewServer(api *operations.KymaDroneAPI) *Server {
 }
 
 // ConfigureAPI configures the API and handlers.
-func (s *Server) ConfigureAPI(drone drone.Drone) {
+func (s *Server) ConfigureAPI(drone drone.Drone, conn *connector.KymaConnector) {
 	if s.api != nil {
-		s.handler = configureAPI(s.api, drone)
+		s.handler = configureAPI(s.api, drone, conn)
 	}
 }
 
@@ -127,7 +128,7 @@ func (s *Server) Fatalf(f string, args ...interface{}) {
 }
 
 // SetAPI configures the server with the specified API. Needs to be called before Serve
-func (s *Server) SetAPI(api *operations.KymaDroneAPI, drone drone.Drone) {
+func (s *Server) SetAPI(api *operations.KymaDroneAPI, drone drone.Drone, conn *connector.KymaConnector) {
 	if api == nil {
 		s.api = nil
 		s.handler = nil
@@ -136,7 +137,7 @@ func (s *Server) SetAPI(api *operations.KymaDroneAPI, drone drone.Drone) {
 
 	s.api = api
 	s.api.Logger = log.Printf
-	s.handler = configureAPI(api, drone)
+	s.handler = configureAPI(api, drone, conn)
 }
 
 func (s *Server) hasScheme(scheme string) bool {

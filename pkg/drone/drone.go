@@ -1,6 +1,7 @@
 package drone
 
 import (
+	"encoding/json"
 	"log"
 
 	connector "github.com/joek/kyma-drone/pkg/kyma-connector"
@@ -43,12 +44,13 @@ type Drone interface {
 	LightControl(id uint8, mode uint8, intensity uint8) error
 	ClawControl(id uint8, mode uint8) (err error)
 	GunControl(id uint8) (err error)
+	gobot.Eventer
 }
 
-func GetDroneWorker(d *minidrone.Driver, conn *connector.KymaConnector) func() {
+func GetDroneWorker(d Drone, conn *connector.KymaConnector) func() {
 	d.On(minidrone.Takeoff, func(data interface{}) {
 		log.Println("Takeoff")
-
+		conn.SendEvent(json.RawMessage(`{"drone": "' + d.Name +'"}`), "drone.takeOff", "v1")
 	})
 	return func() {
 	}

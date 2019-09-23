@@ -261,6 +261,7 @@ func (c *KymaConnector) Register(apiDocs string, eventDocs string, serviceConfig
 	serviceDescription.Name = "Kyma example service"
 
 	if serviceConfig != "" {
+		log.Println("Read Service Config")
 		err := c.ReadService(serviceConfig, serviceDescription)
 		if err != nil {
 			log.Printf("Failed to read service config: %s", serviceConfig)
@@ -270,6 +271,7 @@ func (c *KymaConnector) Register(apiDocs string, eventDocs string, serviceConfig
 
 	if apiDocs != "" {
 		if serviceDescription.API == nil {
+			log.Println("No Servic Description")
 			serviceDescription.API = new(ServiceAPI)
 			serviceDescription.API.TargetURL = "http://localhost:8080/"
 		}
@@ -580,6 +582,7 @@ func (c *KymaConnector) GenerateKeysAndCertificate(subject string) {
 }
 
 func (x *KymaConnector) getApiDocs(apiDocs string) (m json.RawMessage, err error) {
+	log.Println("Load API Docs")
 	apiBytes, err := ioutil.ReadFile(apiDocs)
 	if err != nil {
 		log.Println("Read error on API Docs")
@@ -590,6 +593,7 @@ func (x *KymaConnector) getApiDocs(apiDocs string) (m json.RawMessage, err error
 }
 
 func (x *KymaConnector) getEvetDocs(eventDocs string) (m json.RawMessage, err error) {
+	log.Println("Load Event logs")
 	eventsBytes, err := ioutil.ReadFile(eventDocs)
 	if err != nil {
 		log.Println("Read error on Event Docs")
