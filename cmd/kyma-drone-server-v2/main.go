@@ -35,7 +35,7 @@ func main() {
 			drone.GetDroneWorker(d, c),
 		)
 	} else {
-		bleAdaptor := ble.NewClientAdaptor("Mambo_711742")
+		bleAdaptor := ble.NewClientAdaptor(os.Args[1])
 		d := minidrone.NewDriver(bleAdaptor)
 		driver = d
 
