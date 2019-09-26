@@ -50,7 +50,7 @@ type Drone interface {
 func GetDroneWorker(d Drone, conn *connector.KymaConnector) func() {
 	d.On(minidrone.Takeoff, func(data interface{}) {
 		log.Println("Takeoff")
-		conn.SendEvent(json.RawMessage(`{"drone": "`+d.Name+`"}`), "drone.takeOff", "v1")
+		conn.SendEvent(json.RawMessage(`{"drone": "`+d.Name()+`"}`), "drone.takeOff", "v1")
 	})
 	return func() {
 	}
