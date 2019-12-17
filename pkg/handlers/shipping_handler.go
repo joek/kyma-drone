@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"time"
+	"sync"
 
 	"gobot.io/x/gobot/platforms/parrot/minidrone"
 
@@ -24,16 +24,18 @@ type PublicShippingDroneHandler struct {
 
 // Handle http Handler to Up drones
 func (h PublicShippingDroneHandler) Handle(params operations.ShipPackageParams) middleware.Responder {
+	log.Println("Ship Package")
 	orderCoder := params.Value.OrderCode
+	var mux sync.Mutex
+	mux.Lock()
+	defer mux.Unlock()
+
 	h.drone.Once(minidrone.Landed, func(data interface{}) {
 		log.Println("Landed")
 		h.conn.SendEvent(json.RawMessage([]byte("{\"orderCode\": \""+*orderCoder+"\"}")), "drone.shipped", "v1")
 	})
 	h.drone.Once(minidrone.Hovering, func(data interface{}) {
-		time.AfterFunc(10*time.Second, func() {
-			log.Println("Landing")
-			h.drone.Land()
-		})
+		mux.Unlock()
 	})
 	err := h.drone.TakeOff()
 	if err != nil {
@@ -46,6 +48,9 @@ func (h PublicShippingDroneHandler) Handle(params operations.ShipPackageParams) 
 		})
 		return er
 	}
+	log.Println("Wait for Hovering")
+	mux.Lock()
+	log.Println("Hovering")
 
 	return &operations.UpDroneNoContent{}
 }

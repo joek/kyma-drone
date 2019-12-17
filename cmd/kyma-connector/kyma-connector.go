@@ -88,6 +88,9 @@ func (x *UpdateCommand) Execute(args []string) error {
 }
 
 type SendEvent struct {
+	EventType    string `short:"t" long:"event-type" description:"Event Type"`
+	EventVersion string `short:"v" long:"event-version" description:"Event Version e.g. v1"`
+	Data         string `short:"d" long:"data" description:"Event Payload"`
 }
 
 var sendEvent SendEvent
@@ -99,7 +102,7 @@ func (x *SendEvent) Execute(args []string) error {
 		os.Exit(1)
 	}
 
-	err = c.SendEvent(json.RawMessage(`{"drone": "Mambo_711742"}`), "drone.started", "v1")
+	err = c.SendEvent(json.RawMessage([]byte(x.Data)), x.EventType, x.EventVersion)
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
